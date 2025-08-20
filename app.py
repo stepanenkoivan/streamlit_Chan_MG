@@ -412,6 +412,29 @@ def show():
         else:
             st.text(f"  [!] Нет данных MG для скважины {w}")
 
+    #     # --- График Chan ---
+    #     st.markdown(f"##### Chan-график (WOR и dWOR/dt) — скважина {w}")
+    #     st.text("WOR показывает относительный рост воды; производная dWOR/dt подсвечивает скорость изменений. По совместной динамике можно отличать конинг/каналирование/приствольные эффекты.")
+    #     if not ch_g.empty:
+    #         fig_chan, ax1 = plt.subplots(figsize=(6, 3))
+    #         ax1.set_xlabel('t_pos (дни)')
+    #         ax1.set_ylabel('WOR')
+    #         ax1.scatter(ch_g['t_pos'], ch_g['WOR'], label='WOR')
+    #         ax1.grid(True, alpha=0.3)
+    #         ax2 = ax1.twinx()
+    #         ax2.set_ylabel('dWOR/dt')
+    #         ax2.plot(ch_g['t_pos'], ch_g['dWOR_dt'], label='dWOR/dt', linestyle='--')
+    #         lines, labels = ax1.get_legend_handles_labels()
+    #         lines2, labels2 = ax2.get_legend_handles_labels()
+    #         ax2.legend(lines + lines2, labels + labels2, loc='upper left')
+    #         plt.title(f'Chan — скважина {w}')
+    #         st.pyplot(fig_chan, use_container_width=False)
+    #     else:
+    #         st.text(f"  [!] Нет данных Chan для скважины {w}")
+                
+    # diagnosis_df = pd.DataFrame(rows).sort_values("well").reset_index(drop=True)
+
+
         # --- График Chan ---
         st.markdown(f"##### Chan-график (WOR и dWOR/dt) — скважина {w}")
         st.text("WOR показывает относительный рост воды; производная dWOR/dt подсвечивает скорость изменений. По совместной динамике можно отличать конинг/каналирование/приствольные эффекты.")
@@ -421,9 +444,13 @@ def show():
             ax1.set_ylabel('WOR')
             ax1.scatter(ch_g['t_pos'], ch_g['WOR'], label='WOR')
             ax1.grid(True, alpha=0.3)
+            ax1.set_xscale('log') # Set x-axis to logarithmic scale
+            ax1.set_yscale('log') # Set y-axis to logarithmic scale
             ax2 = ax1.twinx()
             ax2.set_ylabel('dWOR/dt')
             ax2.plot(ch_g['t_pos'], ch_g['dWOR_dt'], label='dWOR/dt', linestyle='--')
+            ax2.set_xscale('log') # Set x-axis to logarithmic scale
+            # ax2.set_yscale('log') # Do not set y-axis to logarithmic scale for derivative
             lines, labels = ax1.get_legend_handles_labels()
             lines2, labels2 = ax2.get_legend_handles_labels()
             ax2.legend(lines + lines2, labels + labels2, loc='upper left')
@@ -433,7 +460,8 @@ def show():
             st.text(f"  [!] Нет данных Chan для скважины {w}")
         
     diagnosis_df = pd.DataFrame(rows).sort_values("well").reset_index(drop=True)
-    
+
+
     if not diagnosis_df.empty:
         st.markdown(f'<h2 style="color: darkred;">СВОДНАЯ ТАБЛИЦА ДИАГНОЗОВ</h2>', unsafe_allow_html=True)
         st.table(diagnosis_df)
@@ -464,4 +492,5 @@ def upload_result(df_MG, df_Chan):
         
 
 if __name__ == '__main__':
+
     show()
